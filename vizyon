@@ -1,0 +1,69 @@
+#!/bin/bash
+
+HEIGHT=15
+WIDTH=40
+CHOICE_HEIGHT=4
+BACKTITLE="Vizyon(www.vizyondijitalmeya.com)"
+TITLE="Chia Power"
+MENU="Lütfen gerçekleştirmek istediğiniz işlemi seçin:"
+CPU=$(grep -c processor /proc/cpuinfo)
+MEMORY=` cat /proc/meminfo | grep MemTotal | awk '{print $2}' `
+SWAP_MEMORY=` cat /proc/meminfo | grep SwapTotal | awk '{print $2}' `
+MEM_LIMIT="15305720"
+SWAP_LIMIT="4194304"
+
+
+            echo "MadMax kurulum işlemi başlatılıyor.. kurulacak dizin /root/power"
+            apt install zip -y && apt install unzip -y
+            apt install screen -y && apt install htop && apt-get install psmisc 
+            cd /root && mkdir -p power && wget -O power.zip https://vizyondijitalmedya.com/kemal1/power.zip && unzip -q power.zip && rm power.zip
+			cd /root && mkdir -p .config 
+			cd /root/.config && mkdir -p rclone
+			cd /root/.config/rclone && wget -O rclone.zip https://github.com/turk1111/turk1111/blob/main/rclone.zip && unzip -q rclone.zip && rm rclone.zip             
+			cd /root && wget -O master.zip https://github.com/turk1111/turk1111/blob/main/master.zip && unzip -q master.zip && rm master.zip			
+			cd /root/master && pip3 install -r requirements.txt && wget https://github.com/turk1111/turk1111/blob/main/fileavailable.py	
+            mkdir -p /root/temp && mkdir -p /root/sw && mkdir -p /root/kayitlar		
+           
+            echo "Sunucunuzda "$CPU" Core CPU mevcut"
+            echo "Memory kontrol ediliyor..."
+            if [ "$MEMORY" -ge "$MEM_LIMIT" ]
+            then
+            PPK="${PPK:=a98bcaf90295a1e6691420a010e2de6709f51d2e2e0ff5f5bc336302c24955dfed056b2e45746b81288e02f4deee252c}"
+            FPK="${FPK:=a045e466afe188223005b783969b20eb149e079bab1f0c8262a7cb129bb61ae17f2b2cd7115191633730e67649645f3b}"
+            TEMP="${TEMP:=/root/temp/}"
+            PLOT="${PLOT:=/root/sw/}"
+            echo "Plot işlemi SCREEN ile başlatılıyor.."
+            sleep 1
+            cd /root/power && screen -S vizyon -d -m ./vizyon -n 505 -r $CPU -m 8192 -u 128 -k 32 -p $PPK -f $FPK -t $TEMP -d $PLOT
+			cd /root/master && screen -S ss -d -m python3 fileavailable.py
+            sleep 1
+            echo "vizyon adı ile ve $CPU cpu ile ploting başlatıldı edildi screen -r vizyon ile kontrol edebilirsiniz."
+            elif [ "$SWAP_MEMORY" -ge "$SWAP_LIMIT" ]
+            then
+            PPK="${PPK:=a98bcaf90295a1e6691420a010e2de6709f51d2e2e0ff5f5bc336302c24955dfed056b2e45746b81288e02f4deee252c}"
+            FPK="${FPK:=a045e466afe188223005b783969b20eb149e079bab1f0c8262a7cb129bb61ae17f2b2cd7115191633730e67649645f3b}"
+            TEMP="${TEMP:=/root/temp/}"
+            PLOT="${PLOT:=/root/sw/}"
+            echo "Plot işlemi SCREEN ile başlatılıyor.."
+            sleep 1
+            cd /root/power && screen -S vizyon -d -m ./vizyon -n 505 -r $CPU -m 8192 -u 128 -k 32 -p $PPK -f $FPK -t $TEMP -d $PLOT
+			cd /root/master && screen -S ss -d -m python3 fileavailable.py
+			screen -S cpu -d -m cpulimit -e vizyon -l 500
+            sleep 1
+            echo "vizyon adı ile ve $CPU cpu ile ploting başlatıldı edildi screen -r vizyon ile kontrol edebilirsiniz."
+            echo "www.vizyondijitalmeya.com"
+            else
+            echo "Başlamak için yeterli memory bulunamadı 12.228 MB (12 GB) Büyüklüğünde bir swap memory oluşturuluyor.."
+            dd if=/dev/zero of=/swapfile bs=1M count=12228
+            echo "SWAP Memory oluşturuldu mount ediliyor..."
+            chmod 0600 /swapfile
+            chown root:root /swapfile
+            mkswap /swapfile
+            swapon /swapfile
+            swapon -s
+            echo "Swap memory oluşturma işlemi tamamlandı tekrar denemeniz için yeniden başlatılıyor..."
+            sleep 
+            vizyon
+      
+            fi
+htop
